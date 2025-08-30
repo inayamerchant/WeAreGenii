@@ -1,0 +1,345 @@
+from manim import *
+
+#Defining useful functions
+def labelline(self, start, end, color=WHITE, label="", direction=DOWN):
+     line = Line(start, end, 0, None, color=color)
+     l = MathTex(label)
+     l.next_to(line, direction)
+     group = VGroup(line, l)
+     return group
+    
+def move(self, mobjects, position=0, mag=0, direction=DOWN, duration=1):
+    group = VGroup(*mobjects)
+    if position != 0:
+        self.play(group.animate.move_to(position), run_time=duration)
+    if position == 0:
+        self.play(group.animate.shift(direction*mag), run_time=duration)
+        
+    
+
+def move_copy(self, mobjects, position, duration=1):
+    copies =[]
+    for m in mobjects:
+        copies.append(m.copy())
+    
+    groupcopy = VGroup(*copies)
+    self.play(groupcopy.animate.move_to(position, duration))
+    return(groupcopy)
+    
+    
+
+class Intro(Scene):
+    def construct(self):
+        #Title--------------------------------------------------------------------------------------------------------------------------------
+        title = Text("The Binomial Theorem", font_size=80)
+        self.play(Write(title), run_time=2)
+        self.play(title.animate.move_to([0,3,0]).scale(0.5), run_time=2)
+        
+    
+        
+        #Binomial theorem--------------------------------------------------------------------------------------------------------------------------------
+        lhs1 = MathTex(r"(", "a", "+", "b", ")", "^", "n")
+        rhs1 = MathTex(
+            "=", r"\binom{n}{0}", "a", "^", "n", "b", "^0",
+            "+", r"\binom{n}{1}", "a", "^{", "n-1", "}", "b", "^1",
+            "+", r"\binom{n}{2}", "a", "^{", "n-2", "}", "b", "^2",
+            "+", r"\cdots",
+            "+", r"\binom{n}{n}", "a", "^0", "b", "^n"
+        )
+        ncr = MathTex(r"\binom{n}{r} = \frac{n!}{(n-r)!\, r!}")
+        where = MathTex("Where")
+        
+        lhs1.set_color_by_tex("a", RED_C)
+        lhs1.set_color_by_tex("b", BLUE_C)
+        lhs1.set_color_by_tex("n", GREEN_C)
+        rhs1.set_color_by_tex("a", RED_C)
+        rhs1.set_color_by_tex("b", BLUE_C)
+        rhs1.set_color_by_tex("n", GREEN_C)
+        ncr.set_color_by_tex("a", RED_C)
+        ncr.set_color_by_tex("b", BLUE_C)
+        ncr.set_color_by_tex("n", GREEN_C)
+        
+        lhs1.scale(0.95)
+        rhs1.scale(0.95)
+        ncr.scale(0.9)
+        where.scale(0.9)
+        
+        self.play(Write(lhs1), run_time=1.5)
+        self.play(lhs1.animate.move_to([-6,0,0]), run_time=1.5)
+        rhs1.next_to(lhs1, RIGHT)
+        self.play(Write(rhs1))
+        where.move_to([-2, -1.5, 0])
+        ncr.next_to(where, RIGHT)
+        self.play(Write(where))
+        self.play(Write(ncr))
+        
+        lhs1.generate_target()
+        lhs1.target.move_to([-6,1,0])
+        where.generate_target()
+        where.target.move_to([-2,-0.5,0])
+        rhs1.generate_target()
+        rhs1.target.next_to(lhs1.target, RIGHT)
+        ncr.generate_target()
+        ncr.target.next_to(where.target, RIGHT)
+        
+        self.play(MoveToTarget(lhs1), MoveToTarget(rhs1), MoveToTarget(where), MoveToTarget(ncr), run_time = 1)
+        
+        
+        
+        #FOIL--------------------------------------------------------------------------------------------------------------------------------
+        lhsfoil = MathTex("(", "a", "+", "b", ")", "^", "5")
+        rhsfoil1 = MathTex(
+            r"=", 
+            r"(", r"a", r"+", r"b", r")",
+            r"(", r"a", r"+", r"b", r")",
+            r"(", r"a", r"+", r"b", r")",
+            r"(", r"a", r"+", r"b", r")",
+            r"(", r"a", r"+", r"b", r")"
+        )
+        
+        lhsfoil.set_color_by_tex("a", RED_C)
+        lhsfoil.set_color_by_tex("b", BLUE_C)
+        lhsfoil.set_color_by_tex("5", GREEN_C)
+        
+        rhsfoil1.set_color_by_tex("a", RED_C)
+        rhsfoil1.set_color_by_tex("b", BLUE_C)
+        
+        
+        self.play(Uncreate(where), Uncreate(ncr))
+        
+        lhsfoil.move_to([-6,-2,0])
+        rhsfoil1.next_to(lhsfoil, RIGHT)
+        self.play(Write(lhsfoil))
+        self.play(Write(rhsfoil1))
+        
+        rhsfoil2 = MathTex(
+            r"=",
+            r"(", r"a", r"^2", r"+", r"2", r"a", r"b", r"+", r"b", r"^2", r")",
+            r"(", r"a", r"+", r"b", r")",
+            r"(", r"a", r"+", r"b", r")",
+            r"(", r"a", r"+", r"b", r")"
+        )
+        rhsfoil2.next_to(lhsfoil, RIGHT)
+        rhsfoil2.set_color_by_tex("a", RED_C)
+        rhsfoil2.set_color_by_tex("b", BLUE_C)
+        self.play(TransformMatchingShapes(rhsfoil1, rhsfoil2))
+        
+        rhsfoil3 = MathTex(
+            r"=",
+            r"(", r"a", r"^3", r"+", r"3", r"a", r"^2", r"b", r"+", r"3", r"a", r"b", r"^2", r"+", r"b", r"^3", r")",
+            r"(", r"a", r"+", r"b", r")",
+            r"(", r"a", r"+", r"b", r")"
+        )
+        rhsfoil3.set_color_by_tex("a", RED_C)
+        rhsfoil3.next_to(lhsfoil, RIGHT)
+        rhsfoil3.set_color_by_tex("b", BLUE_C)
+        self.play(TransformMatchingShapes(rhsfoil2, rhsfoil3))
+        
+        rhsfoil4 = MathTex(
+            r"=",
+            r"(", r"a", r"^4", r"+", r"4", r"a", r"^3", r"b", r"+", r"6", r"a", r"^2", r"b", r"^2", r"+", r"4", r"a", r"b", r"^3", r"+", r"b", r"^4", r")",
+            r"(", r"a", r"+", r"b", r")"
+        )
+        rhsfoil4.next_to(lhsfoil, RIGHT)
+        rhsfoil4.set_color_by_tex("a", RED_C)
+        rhsfoil4.set_color_by_tex("b", BLUE_C)
+        self.play(TransformMatchingShapes(rhsfoil3, rhsfoil4))
+        
+        rhsfoil5 = MathTex(
+            r"=",
+            r"a", r"^5", r"+",
+            r"5", r"a", r"^4", r"b", r"+",
+            r"10", r"a", r"^3", r"b", r"^2", r"+",
+            r"10", r"a", r"^2", r"b", r"^3", r"+",
+            r"5", r"a", r"b", r"^4", r"+",
+            r"b", r"^5"
+        )
+        rhsfoil5.next_to(lhsfoil, RIGHT)
+        rhsfoil5.set_color_by_tex("a", RED_C)
+        rhsfoil5.set_color_by_tex("b", BLUE_C)
+        self.play(TransformMatchingShapes(rhsfoil4, rhsfoil5))
+        
+        
+        
+        
+        #Plug in numbers--------------------------------------------------------------------------------------------------------------------------------
+        lhs2 = MathTex(r"(", "a", "+", "b", ")", "^", "5")
+        rhs2l1 = MathTex(
+            "=", r"\binom{5}{0}", "a", "^", "5", "b", "^0",
+            "+", r"\binom{5}{1}", "a", "^{", "4", "}", "b", "^1",
+            "+", r"\binom{5}{2}", "a", "^{", "3", "}", "b", "^2",
+            "+", r"\binom{5}{3}", "a", "^{", "2", "}", "b", "^3",
+            "+", r"\binom{5}{4}", "a", "^{", "1", "}", "b", "^4",
+        )
+        rhs2l2 = MathTex("\phantom{+}+", r"\binom{5}{5}", "a", "^0", "b", "^5")
+        rhs2 = VGroup(rhs2l1, rhs2l2)
+        
+        lhs2.set_color_by_tex("a", RED_C)
+        lhs2.set_color_by_tex("b", BLUE_C)
+        lhs2.set_color_by_tex("5", GREEN_C)
+        rhs2l1.set_color_by_tex("a", RED_C)
+        rhs2l1.set_color_by_tex("b", BLUE_C)
+        rhs2l1.set_color_by_tex("5", GREEN_C)
+        rhs2l2.set_color_by_tex("a", RED_C)
+        rhs2l2.set_color_by_tex("b", BLUE_C)
+        rhs2l2.set_color_by_tex("5", GREEN_C)
+
+        lhs2.scale(0.95)
+        rhs2l1.scale(0.95)
+        rhs2l2.scale(0.95)
+        
+        lhs2.move_to([-6,1,0])
+        rhs2l1.next_to(lhs2, RIGHT)
+        
+        rhs3 = MathTex(
+            r"=",
+            r"a", r"^5", r"+",
+            r"5", r"a", r"^4", r"b", r"+",
+            r"10", r"a", r"^3", r"b", r"^2", r"+",
+            r"10", r"a", r"^2", r"b", r"^3", r"+",
+            r"5", r"a", r"b", r"^4", r"+",
+            r"b", r"^5"
+        )
+        rhs3.next_to(lhs2)
+        rhs3.set_color_by_tex("a", RED_C)
+        rhs3.set_color_by_tex("b", BLUE_C)
+        rhs3.set_color_by_tex("5", GREEN_C)
+        
+        self.play(TransformMatchingShapes(lhs1, lhs2))
+        self.play(TransformMatchingShapes(rhs1, rhs2l1))
+        self.play(TransformMatchingShapes(rhs2, rhs3))
+        
+       
+        #Summary of visuals----------------------------------------------------------------------------------------------------------------------------------
+        
+        
+        
+class Basic(ThreeDScene):
+    def construct(self):
+        #2D---------------------------------------------------------------------------------------------------------------------------------------------------------
+        sqaxes = Axes([-1, 3], [-1, 3], 7, 7)
+        unit = sqaxes.get_x_unit_size()
+        labels = sqaxes.get_axis_labels("x", "y")
+        #labels[1].rotate(-PI/2)
+        
+        #self.set_camera_orientation(phi=0, gamma = 0)
+        
+        self.add(sqaxes, labels)
+        
+        aabs = 1.3*unit
+        aax = 1.3
+        square = Square(aabs, color=RED_C, fill_opacity=0.8)
+        square.align_to(sqaxes.coords_to_point(0,0), DL)
+        sqleftlabel = MathTex("a").next_to(square, LEFT)
+        sqdownlabel = MathTex("a").next_to(square, DOWN)
+        sqleftlabel.set_color(RED_C)
+        sqdownlabel.set_color(RED_C)
+        
+        self.play(DrawBorderThenFill(square), Write(sqleftlabel), Write(sqdownlabel))
+        
+        
+        #Increase length by b--------------------------------------------------------------------------------------------------------------------------------------
+        babs = 0.7*unit
+        bax = 0.7
+        xb = labelline(self, sqaxes.coords_to_point(aax,0), sqaxes.coords_to_point(aax+bax,0), BLUE_D, "b", DOWN)
+        yb = labelline(self, sqaxes.coords_to_point(0,aax), sqaxes.coords_to_point(0,aax+bax), BLUE_D, "b", LEFT)
+        self.play(Create(xb), Create(yb))
+        
+        x2a = Line(sqaxes.coords_to_point(0,0), sqaxes.coords_to_point(aax,0), 0, color=RED_C)
+        x2b = Line(sqaxes.coords_to_point(aax,0), sqaxes.coords_to_point(aax+bax,0), 0, color=BLUE_D)
+        y2a = Line(sqaxes.coords_to_point(0,0), sqaxes.coords_to_point(0,aax), 0, color=RED_C)
+        y2b = Line(sqaxes.coords_to_point(0,aax), sqaxes.coords_to_point(0,aax+bax), 0, color=BLUE_D)
+        
+        move(self, [x2a, x2b], 0, aabs+babs, UP) 
+        move(self, [y2a, y2b], 0, aabs+babs, RIGHT)
+        
+        big_square = Square(aabs+babs, color=PURPLE_A, fill_opacity=0.8, stroke_opacity=0)
+        big_square.align_to(sqaxes.coords_to_point(0,0), DL)
+        self.play(DrawBorderThenFill(big_square), FadeOut(square), run_time=2)
+        
+        
+        #(a+b)^2------------------------------------------------------------------------------------------------------------------------------------------------------------
+        move(self, [sqaxes, labels, sqleftlabel, sqdownlabel, xb, yb, x2a, x2b, y2a, y2b, big_square], 0, 3, LEFT)
+        
+        x3a = Line(sqaxes.coords_to_point(0,0), sqaxes.coords_to_point(aax,0), color=RED_C)
+        x3b = Line(sqaxes.coords_to_point(aax,0), sqaxes.coords_to_point(aax+bax,0), color=BLUE_D)
+        x3group = VGroup(x3a,x3b)
+        y3a = Line(sqaxes.coords_to_point(0,0), sqaxes.coords_to_point(0, aax), color=RED_C) 
+        y3b = Line(sqaxes.coords_to_point(0,aax), sqaxes.coords_to_point(0, aax+bax), color=BLUE_D)
+        y3group = VGroup(y3a,y3b)
+        
+        self.play(x3group.animate.move_to([2,2,0]).scale(0.5))
+        
+        mult1 = MathTex("*")
+        mult1.next_to(x3group, RIGHT)
+        self.play(Write(mult1))
+        
+        y3group.generate_target()
+        y3group.target.next_to(mult1, RIGHT)
+        y3group.target.scale(0.5)
+        self.play(MoveToTarget(y3group), run_time=2)
+        
+        equals1 = MathTex("=")
+        equals1.next_to(y3group, RIGHT)
+        self.play(Write(equals1))
+        
+        rhs4 = MathTex(r"(", "a", "+", "b", ")", "^", "2")
+        rhs4.set_color_by_tex("a", RED_C)
+        rhs4.set_color_by_tex("b", BLUE_C)
+        rhs4.set_color_by_tex("2", GREEN_C)
+        rhs4.next_to(equals1, RIGHT)
+        self.play(Write(rhs4))
+        
+        
+        
+        #Divide up big square-------------------------------------------------------------------------------------------------------------------------------------------
+        
+        x4a = Line(sqaxes.coords_to_point(0,aax), sqaxes.coords_to_point(aax,aax), color=RED_C)
+        y4a = Line(sqaxes.coords_to_point(aax,0), sqaxes.coords_to_point(aax, aax), color=RED_C)
+        x4b = Line(sqaxes.coords_to_point(aax,aax), sqaxes.coords_to_point(aax+bax, aax), color=BLUE_D)
+        y4b = Line(sqaxes.coords_to_point(aax,aax), sqaxes.coords_to_point(aax, aax+bax), color=BLUE_D)
+        
+        self.play(Create(x4a), Create(y4a))
+        self.play(Create(x4b), Create(y4b))
+        
+        b2_square = Square(babs, color=BLUE_D, fill_opacity=0.8, stroke_opacity=0)
+        ab_rect_1 = Rectangle(PURPLE_A, babs, aabs, fill_opacity=0.8, stroke_opacity=0)
+        ab_rect_2 = Rectangle(PURPLE_A, aabs, babs, fill_opacity=0.8, stroke_opacity=0)
+        
+        square.align_to(sqaxes.coords_to_point(0,0), DL)
+        b2_square.align_to(sqaxes.coords_to_point(aax,aax), DL)
+        ab_rect_1.align_to(sqaxes.coords_to_point(0,aax), DL)
+        ab_rect_2.align_to(sqaxes.coords_to_point(aax,0), DL)
+        
+        self.play(DrawBorderThenFill(square), DrawBorderThenFill(b2_square), DrawBorderThenFill(ab_rect_1), DrawBorderThenFill(ab_rect_2), FadeOut(big_square), run_time=2)
+        
+        #a^2+2ab+b^2-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        
+        a2_copy = square.copy()
+        b2_copy = b2_square.copy()
+        ab_1_copy = ab_rect_1.copy()
+        ab_2_copy = ab_rect_2.copy()
+        
+        self.play(a2_copy.animate.move_to([2,0,0]), a2_copy.animate.scale(0.5))
+        
+        plus1 = MathTex("+")
+        plus1.next_to(a2_copy, RIGHT)
+        self.play(Write(plus1))
+        
+        ab_1_copy.generate_target()
+        ab_1_copy.target.next_to(plus1, RIGHT)
+        ab_1_copy.target.scale(0.5)
+        
+        
+        
+        
+        
+            
+            
+        
+        
+        
+        
+        
+   
+# manim -pql Binomial\ Theorem\ SoME\ Animations.py Basic  
